@@ -19,9 +19,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -46,16 +43,8 @@ public class SystemUserDaoService {
         return modelMapper.map(response, SystemUser.class);
     }
 
-    public SystemUser findById(Long id) {
-        return repository.findById(id).map(entity -> modelMapper.map(entity, SystemUser.class)).orElse(null);
-    }
-
     public SystemUser findByCode(String code)  {
         return repository.findByCode(code).map(entity -> modelMapper.map(entity, SystemUser.class)).orElse(null);
-    }
-
-    public List<SystemUser> getAllUsers() {
-        return repository.findAll().stream().map(entity -> modelMapper.map(entity, SystemUser.class)).collect(Collectors.toList());
     }
 
     public SystemUser update(String code, SystemUser systemUser) {
@@ -67,19 +56,6 @@ public class SystemUserDaoService {
         modelMapper.map(systemUser, user);
         BeanUtils.copyProperties(systemUser, user, "password");
 
-        return save(user);
-    }
-
-    public SystemUser updateByUsername(String username, SystemUser systemUser) {
-        SystemUser user = findByUsername(username);
-        if (ObjectUtils.isEmpty(user)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The user  with username " + username + " does not exists");
-        }
-        systemUser.setId(user.getId());
-        systemUser.setCode(user.getCode());
-        systemUser.setPassword(user.getPassword());
-        systemUser.setUserRoleType(!ObjectUtils.isEmpty(systemUser.getUserRoleType()) ? systemUser.getUserRoleType() : UserRoleType.USER);
-        modelMapper.map(systemUser, user);
         return save(user);
     }
 
@@ -95,41 +71,7 @@ public class SystemUserDaoService {
         return user.getUsername() + " has updated to " + roleType + " successfully";
     }
 
-    public String delete(String code) {
-
-        var user = findByCode(code);
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The user  with code " + code + " does not exists");
-        }
-        repository.delete(modelMapper.map(user, SystemUserEntity.class));
-
-        return user.getUsername() + " Deleted Successfully";
-    }
-
     public String userCode(String userName) {
         return userName + LocalDateTime.now().getNano();
-    }
-
-
-    public Page<SystemUser> findAll(final Predicate predicate, final PageRequest pageRequest) {
-        return repository.findAll(predicate, pageRequest).map(entity -> modelMapper.map(entity, SystemUser.class));
-    }
-
-    public SystemUser findByUsernameOrEmail(String emailOrUsername) {
-        return repository.findByUsernameOrEmail(emailOrUsername, emailOrUsername).map(systemUserEntity -> modelMapper.map(systemUserEntity, SystemUser.class)).orElse(null);
-    }
-
-    public BaseResponse updateUserStatus(String username, boolean active){
-        SystemUser systemUser = Optional.ofNullable(findByUsername(username)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No record found for user with username: " + username));
-        systemUser.setActive(active);
-        save(systemUser);
-        return BaseResponse.builder()
-                .code(ResponseCodes.SUCCESS.getCode())
-                .message(ResponseCodes.SUCCESS.getMessage())
-                .build();
-    }
-
-    public boolean validateUserNameOrEmail(String userName, String email){
-        return repository.existsByUsernameOrEmail(userName, email);
     }
 }

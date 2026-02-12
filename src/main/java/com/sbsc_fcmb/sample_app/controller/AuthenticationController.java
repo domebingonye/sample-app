@@ -3,7 +3,6 @@ package com.sbsc_fcmb.sample_app.controller;
 import com.sbsc_fcmb.sample_app.dto.LoginRequest;
 import com.sbsc_fcmb.sample_app.dto.LoginResponse;
 import com.sbsc_fcmb.sample_app.dto.SystemUser;
-import com.sbsc_fcmb.sample_app.enums.ResponseCodes;
 import com.sbsc_fcmb.sample_app.enums.UserRoleType;
 import com.sbsc_fcmb.sample_app.service.AuthenticationService;
 import com.sbsc_fcmb.sample_app.service.SystemUserDaoService;

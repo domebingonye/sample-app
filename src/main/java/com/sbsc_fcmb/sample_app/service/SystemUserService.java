@@ -1,7 +1,6 @@
 package com.sbsc_fcmb.sample_app.service;
 
 import com.sbsc_fcmb.sample_app.dto.SystemUser;
-import com.sbsc_fcmb.sample_app.enums.ResponseCodes;
 import com.sbsc_fcmb.sample_app.enums.UserRoleType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,16 +49,6 @@ public class SystemUserService implements UserDetailsService {
         systemUser.setId(result.getId());
         systemUser.setCode(result.getCode());
         return systemUser;
-    }
-
-    public SystemUser changePassword(String code, String password) {
-        SystemUser user = systemUserDaoService.findByCode(code);
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The user  with code " + code + " does not exists");
-        }
-        user.setPassword(passwordEncoder.encode(password));
-        user.setUserRoleType(!ObjectUtils.isEmpty(user.getUserRoleType()) ? user.getUserRoleType() : UserRoleType.USER);
-        return systemUserDaoService.save(user);
     }
 
 

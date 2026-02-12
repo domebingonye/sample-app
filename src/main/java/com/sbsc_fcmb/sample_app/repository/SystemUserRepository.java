@@ -6,10 +6,8 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.Optional;
 
-public interface SystemUserRepository extends JpaRepository<SystemUserEntity, Long>, QuerydslPredicateExecutor<SystemUserEntity> {
-    Optional<SystemUserEntity> findByUsernameOrEmail(String username, String email);
+public interface SystemUserRepository extends JpaRepository<SystemUserEntity, Long> {
     Optional<SystemUserEntity> findByUsername(String username);
     Optional<SystemUserEntity> findByEmail(String email);
     Optional<SystemUserEntity> findByCode(String code);
-    boolean existsByUsernameOrEmail(String username, String email);
 }
